@@ -3,7 +3,7 @@ import type { Option } from "./monads.js"
 import type { ILogger } from "./logger.js"
 
 export class DatabaseConfig {
-    constructor(public readonly path: string = "site.db") {}
+    constructor(public readonly path: string = "site.db") { }
 }
 
 export class Database {
@@ -63,7 +63,7 @@ export class EntityValidationError extends Error {
 }
 
 type QueryResult = Record<string, SQLOutputValue>[]
-type NamedArgs = Record<string, Stringable | Date | null> | object
+type NamedArgs = Record<string, Stringable | Date | null>
 type NamedResult = { query: string; params: ParamType[] }
 type ParamType = Option<string>
 

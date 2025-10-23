@@ -18,7 +18,7 @@ export class UserRepo {
 
     list(args?: LimitOffset): UserEntity[] {
         if (!args) args = new LimitOffset()
-        const result = this.db.queryNamed(this.#listQuery, args)
+        const result = this.db.queryNamed(this.#listQuery, { ...args })
         return result.map((u) => UserEntity.validated(u))
     }
 
@@ -28,7 +28,7 @@ export class UserRepo {
 	`
 
     insert(user: UserEntity) {
-        this.db.execNamed(this.#insertQuery, user)
+        this.db.execNamed(this.#insertQuery, { ...user })
     }
 
     #findByIdQuery = `

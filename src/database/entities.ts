@@ -1,6 +1,6 @@
 import { z } from "zod"
-import { Results, type Option } from "./monads.js"
-import { EntityValidationError } from "./database.js"
+import { Results, type Option } from "#src/lib/monads.js"
+import { EntityValidationError } from "#src/lib/database.js"
 
 type UserRole = "ADMIN" | "CUSTOMER"
 
@@ -21,7 +21,7 @@ export class UserEntity {
         public role: UserRole,
         public createdAt: Date,
         public deletedAt: Option<Date>,
-    ) {}
+    ) { }
 
     static validated(raw: unknown): UserEntity {
         const v = Results.of(() => UserEntity.schema.parse(raw))
