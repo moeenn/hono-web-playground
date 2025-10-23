@@ -3,4 +3,3 @@ node_modules/
 dist/
 *.db
 *.kate-swp
-/public/css/styles.css
