@@ -3,11 +3,12 @@ import { type Database, LimitOffset } from "#src/lib/database.js"
 import { type NilResult, type Option, Results } from "#src/lib/monads.js"
 
 export class UserRepo {
-    constructor(private db: Database) {}
+    constructor(private db: Database) { }
 
     #listQuery = `
 		select * from users
 		where deletedAt is null
+		order by createdAt desc
 		limit :limit
 		offset :offset
 	`

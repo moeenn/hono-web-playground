@@ -1,22 +1,29 @@
-import { Database, DatabaseConfig } from "src/lib/database.js"
+import { Hono } from "hono"
+import { serve } from "@hono/node-server"
+import { Logger } from "#src/lib/logger.js"
+import { Database } from "#src/lib/database.js"
 import { UserRepo } from "#src/database/repos.js"
-import { AuthService } from "#src/database/services.js"
 import { entrypoint } from "#src/lib/entrypoint.js"
+import { Config } from "#src/config.js"
+import { UsersController } from "#src/controllers.js"
+import { registerMiddleware } from "#src/lib/middleware.js"
 
-async function main(): Promise<void> {
-    const config = new DatabaseConfig()
-    const db = new Database(config)
+function main(): void {
+    const logger = new Logger()
+    const config = new Config()
+    const db = new Database(config.db)
 
     const userRepo = new UserRepo(db)
-    const authService = new AuthService(userRepo)
-    // const users = [
-    // 	await UserEntity.make({ email: "admin@site.com", password: "123123123", role: "ADMIN" }),
-    // 	await UserEntity.make({ email: "one@site.com", password: "cansclkascn", role: "CUSTOMER" }),
-    // 	await UserEntity.make({ email: "two@site.com", password: "sackwdlkja", role: "CUSTOMER" }),
-    // ]
+    const userController = new UsersController(userRepo, logger)
 
-    const user = await authService.authenticate("admin@site.com", "1231231234")
-    console.log(user)
+    const server = new Hono()
+    registerMiddleware(server)
+    server.route("/users", userController.routes())
+    // server.get("*", (ctx) => ctx.html(NotFoundPage()))
+
+    serve({ fetch: server.fetch, port: config.server.port }, () => {
+        logger.info("starting server", { address: config.server.getUrl() })
+    })
 }
 
 entrypoint(main)

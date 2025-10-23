@@ -3,7 +3,7 @@ import { EntityValidationError } from "#src/lib/database.js"
 import { Hasher } from "#src/lib/hash.js"
 import type { Option } from "#src/lib/monads.js"
 
-type UserRole = "ADMIN" | "CUSTOMER"
+export type UserRole = "ADMIN" | "CUSTOMER"
 
 export class UserEntity {
     public id: string

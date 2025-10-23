@@ -2,17 +2,23 @@
 	"name": "sandbox",
 	"version": "0.0.1",
 	"type": "module",
-	"main": "main.js",
 	"scripts": {
-		"start": "tsx ./src/cmd/main.ts",
+		"server:dev": "tsx watch --env-file=.env src/cmd/main.ts",
 		"type-check": "npx tsc --noEmit",
 		"fmt": "npx prettier --write ./src/",
 		"lint": "npx eslint --fix ./src/ --ext .ts",
 		"check": "npm run type-check && npm run lint",
-		"build": "npx ncc build --minify --v8-cache --no-source-map-register ./src/main.ts -o ./dist",
+		"build": "npx ncc build --minify --v8-cache --no-source-map-register ./src/cmd/main.ts -o ./dist",
 		"test": "NODE_ENV=test node --import tsx --test",
 		"migrate:up": "tsx ./src/cmd/migrate.ts -cmd=up",
-		"migrate:down": "tsx ./src/cmd/migrate.ts -cmd=down"
+		"migrate:down": "tsx ./src/cmd/migrate.ts -cmd=down",
+		"remove:dist": "rm -rvf ./dist",
+		"copy:public": "cp -r ./public ./dist/",
+		"compile": "npx ncc build ./src/cmd/main.ts -o ./dist",
+		"pkg": "npm run remove:dist && npm run type-check && npm run css:build && npm run compile && npm run copy:public",
+		"start": "node dist/main.js",
+		"css:dev": "npx @tailwindcss/cli -i ./src/views/styles/global.css -o ./public/css/styles.css --watch",
+		"css:build": "npx @tailwindcss/cli -i ./src/views/styles/global.css -o ./public/css/styles.css --minify"
 	},
 	"prettier": {
 		"singleQuote": false,
@@ -25,6 +31,7 @@
 		"#src/*": "./dist/*"
 	},
 	"devDependencies": {
+		"@tailwindcss/cli": "^4.1.11",
 		"@types/node": "^24.2.0",
 		"@vercel/ncc": "^0.38.3",
 		"eslint": "^9.32.0",
@@ -34,7 +41,10 @@
 		"typescript-eslint": "^8.46.2"
 	},
 	"dependencies": {
+		"@hono/node-server": "^1.19.5",
 		"argon2": "^0.44.0",
+		"classnames": "^2.5.1",
+		"hono": "^4.10.2",
 		"pino": "^10.1.0",
 		"zod": "^4.1.12"
 	}

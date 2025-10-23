@@ -14,14 +14,17 @@
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
 		"isolatedModules": true,
-		"checkJs": true,
+		"checkJs": false,
 		"esModuleInterop": true,
 		"target": "ESNext",
 		"module": "NodeNext",
+        "jsx": "react-jsx",
+        "jsxImportSource": "hono/jsx",
 		"verbatimModuleSyntax": true,
 		"skipLibCheck": true,
 		"types": ["node"],
 		"outDir": "./dist",
+		"rootDir": ".",
 		"baseUrl": ".",
 		"paths": {
 			"#src/*": ["./src/*"]
