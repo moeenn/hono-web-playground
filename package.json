@@ -1,40 +1,41 @@
 {
-    "name": "sandbox",
-    "version": "0.0.1",
-    "type": "module",
-    "main": "main.js",
-    "scripts": {
-        "start": "tsx ./src/cmd/main.ts",
-        "fmt": "npx prettier --write ./src/",
-        "type-check": "npx tsc --noEmit",
-        "lint": "npx eslint --fix ./src/",
-        "check": "npm run type-check && npm run lint",
-        "build": "npx ncc build --minify --v8-cache --no-source-map-register ./src/main.ts -o ./dist",
-        "test": "NODE_ENV=test node --import tsx --test",
-        "migrate:up": "tsx ./src/cmd/migrate.ts -cmd=up",
-        "migrate:down": "tsx ./src/cmd/migrate.ts -cmd=down"
-    },
-    "prettier": {
-        "singleQuote": false,
-        "semi": false,
-        "tabWidth": 4,
-        "trailingComma": "all",
-        "printWidth": 100
-    },
-    "imports": {
-        "#src/*": "./dist/*"
-    },
-    "devDependencies": {
-        "@types/node": "^24.2.0",
-        "@vercel/ncc": "^0.38.3",
-        "eslint": "^9.32.0",
-        "prettier": "^3.6.2",
-        "tsx": "^4.20.3",
-        "typescript": "^5.9.2",
-        "typescript-eslint": "^8.39.0"
-    },
-    "dependencies": {
-        "pino": "^10.1.0",
-        "zod": "^4.1.12"
-    }
+	"name": "sandbox",
+	"version": "0.0.1",
+	"type": "module",
+	"main": "main.js",
+	"scripts": {
+		"start": "tsx ./src/cmd/main.ts",
+		"type-check": "npx tsc --noEmit",
+		"fmt": "npx prettier --write ./src/",
+		"lint": "npx eslint --fix ./src/ --ext .ts",
+		"check": "npm run type-check && npm run lint",
+		"build": "npx ncc build --minify --v8-cache --no-source-map-register ./src/main.ts -o ./dist",
+		"test": "NODE_ENV=test node --import tsx --test",
+		"migrate:up": "tsx ./src/cmd/migrate.ts -cmd=up",
+		"migrate:down": "tsx ./src/cmd/migrate.ts -cmd=down"
+	},
+	"prettier": {
+		"singleQuote": false,
+		"semi": false,
+		"tabWidth": 4,
+		"trailingComma": "all",
+		"printWidth": 100
+	},
+	"imports": {
+		"#src/*": "./dist/*"
+	},
+	"devDependencies": {
+		"@types/node": "^24.2.0",
+		"@vercel/ncc": "^0.38.3",
+		"eslint": "^9.32.0",
+		"prettier": "^3.6.2",
+		"tsx": "^4.20.3",
+		"typescript": "^5.9.2",
+		"typescript-eslint": "^8.46.2"
+	},
+	"dependencies": {
+		"argon2": "^0.44.0",
+		"pino": "^10.1.0",
+		"zod": "^4.1.12"
+	}
 }

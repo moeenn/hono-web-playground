@@ -1,9 +1,10 @@
 import { DatabaseSync, type SQLOutputValue } from "node:sqlite"
-import type { Option } from "./monads.js"
+import type { ZodError } from "zod"
 import type { ILogger } from "./logger.js"
+import type { Option } from "./monads.js"
 
 export class DatabaseConfig {
-    constructor(public readonly path: string = "site.db") { }
+    constructor(public readonly path: string = "site.db") {}
 }
 
 export class Database {
@@ -57,8 +58,11 @@ export class Database {
 }
 
 export class EntityValidationError extends Error {
-    constructor(entityName: string) {
+    public details: ZodError
+
+    constructor(entityName: string, error: ZodError) {
         super(`unexpected data in database entity: '${entityName}'`)
+        this.details = error
     }
 }
 

@@ -1,6 +1,6 @@
 import path from "node:path"
 import process from "node:process"
-import { Results, type Result, type Option } from "#src/lib/monads.js"
+import { type Option, type Result, Results } from "#src/lib/monads.js"
 
 class StringBuilder {
     #pieces: string[] = []
@@ -102,7 +102,7 @@ export class Argparse {
         // ensure all require args have been provded.
         for (const option of this.#options) {
             if (!(option.name in this.#map)) {
-                if (option.default != undefined) {
+                if (option.default !== undefined) {
                     this.#map[option.name] = option.default
                 } else {
                     return Results.err(`missing required flag: ${option.name}`)
@@ -140,7 +140,7 @@ export class Argparse {
      */
     #parseSingleArgument(arg: string): Result<Pair<string, MapValue>> {
         if (!arg.startsWith("-")) {
-            throw new Error("invalid argument: " + arg)
+            throw new Error(`invalid argument: ${arg}`)
         }
 
         // parse flags provided without values.
@@ -149,32 +149,32 @@ export class Argparse {
             const relatedRegisteredOption = this.#options.find((opt) => opt.name === key)
 
             if (!relatedRegisteredOption) {
-                return Results.err("unknown argument: " + key)
+                return Results.err(`unknown argument: ${key}`)
             }
 
             if (relatedRegisteredOption.kind === "boolean") {
                 return Results.ok(new Pair(key, true))
             }
 
-            return Results.err("missing argument for -" + key)
+            return Results.err(`missing argument for -${key}`)
         }
 
         // parse value flags.
         const trimmedArg = arg.slice(1)
         const pieces = trimmedArg.split("=")
         if (pieces.length !== 2) {
-            return Results.err("invalid argument: " + arg)
+            return Results.err(`invalid argument: ${arg}`)
         }
 
         const [key, value] = pieces
         if (!key || !value) {
-            return Results.err("invalid argument: " + arg)
+            return Results.err(`invalid argument: ${arg}`)
         }
 
         const relatedRegisteredOption = this.#options.find((opt) => opt.name === key)
 
         if (!relatedRegisteredOption) {
-            return Results.err("unknown argument: " + key)
+            return Results.err(`unknown argument: ${key}`)
         }
 
         switch (relatedRegisteredOption.kind) {
@@ -198,14 +198,15 @@ export class Argparse {
                     case "":
                         return Results.err(`missing value for flag -${key}`)
 
-                    default:
-                        const parsedInt = Results.of(() => parseInt(value))
+                    default: {
+                        const parsedInt = Results.of(() => Number.parseInt(value, 10))
                         if (parsedInt.isError) {
                             return Results.err(
                                 `invalid decimal value provided for flag -${key}: ${value}`,
                             )
                         }
                         return Results.ok(new Pair(key, parsedInt.value))
+                    }
                 }
 
             case "float":
@@ -213,7 +214,7 @@ export class Argparse {
                     case "":
                         return Results.err(`missing value for flag -${key}`)
 
-                    default:
+                    default: {
                         const parsedFloat = Results.of(() => parseFloat(value))
                         if (parsedFloat.isError) {
                             return Results.err(
@@ -221,6 +222,7 @@ export class Argparse {
                             )
                         }
                         return Results.ok(new Pair(key, parsedFloat.value))
+                    }
                 }
 
             case "string":
@@ -237,7 +239,7 @@ export class Argparse {
     #getHelp(): string {
         const builder = new StringBuilder()
         if (this.#programDescription) {
-            builder.append(this.#programDescription + "\n")
+            builder.append(`${this.#programDescription}\n`)
         }
 
         builder.append(`usage: ${this.#scriptName} [argument=value]\n`)

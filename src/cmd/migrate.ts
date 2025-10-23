@@ -1,13 +1,9 @@
 import process from "node:process"
-import { Database, DatabaseConfig, MigrationManager, type Migration } from "src/lib/database.js"
-import { Logger } from "#src/lib/logger.js"
+import { Database, DatabaseConfig, type Migration, MigrationManager } from "src/lib/database.js"
 import { CreateUsersTableMigration } from "#src/database/migrations.js"
-import { entrypoint } from "#src/lib/entrypoint.js"
 import { Argparse } from "#src/lib/argparse.js"
-
-type CommandLineArgs = {
-    cmd: string
-}
+import { entrypoint } from "#src/lib/entrypoint.js"
+import { Logger } from "#src/lib/logger.js"
 
 function main(args: string[]): void {
     const parser = new Argparse(args, [
@@ -19,7 +15,7 @@ function main(args: string[]): void {
         },
     ])
 
-    const parsedArgs = parser.parse<CommandLineArgs>()
+    const parsedArgs = parser.parse<{ cmd: string }>()
     if (parsedArgs.isError) {
         throw parsedArgs.error
     }
@@ -42,7 +38,7 @@ function main(args: string[]): void {
             break
 
         default:
-            throw new Error("invalid command: " + parsedArgs.value.cmd)
+            throw new Error(`invalid command: ${parsedArgs.value.cmd}`)
     }
 }
 

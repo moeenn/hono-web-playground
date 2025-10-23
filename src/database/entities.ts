@@ -1,10 +1,18 @@
 import { z } from "zod"
-import { Results, type Option } from "#src/lib/monads.js"
 import { EntityValidationError } from "#src/lib/database.js"
+import { Hasher } from "#src/lib/hash.js"
+import type { Option } from "#src/lib/monads.js"
 
 type UserRole = "ADMIN" | "CUSTOMER"
 
 export class UserEntity {
+    public id: string
+    public email: string
+    public password: string
+    public role: UserRole
+    public createdAt: Date
+    public deletedAt: Option<Date>
+
     static schema = z.object({
         id: z.uuid(),
         email: z.email(),
@@ -14,35 +22,39 @@ export class UserEntity {
         deletedAt: z.coerce.date().nullable(),
     })
 
-    constructor(
-        public id: string,
-        public email: string,
-        public password: string,
-        public role: UserRole,
-        public createdAt: Date,
-        public deletedAt: Option<Date>,
-    ) { }
-
-    static validated(raw: unknown): UserEntity {
-        const v = Results.of(() => UserEntity.schema.parse(raw))
-        if (v.isError) {
-            console.log(v.error)
-            throw new EntityValidationError("user")
-        }
-
-        return new UserEntity(
-            v.value.id,
-            v.value.email,
-            v.value.password,
-            v.value.role,
-            v.value.createdAt,
-            v.value.deletedAt,
-        )
+    constructor(args: UserEntity) {
+        this.id = args.id
+        this.email = args.email
+        this.password = args.password
+        this.role = args.role
+        this.createdAt = args.createdAt
+        this.deletedAt = args.deletedAt
     }
 
-    static make(email: string, password: string, role: UserRole): UserEntity {
+    static validated(raw: unknown): UserEntity {
+        const v = UserEntity.schema.safeParse(raw)
+        if (!v.success) {
+            throw new EntityValidationError("user", v.error)
+        }
+
+        return new UserEntity(v.data)
+    }
+
+    static async make(args: {
+        email: string
+        password: string
+        role: UserRole
+    }): Promise<UserEntity> {
         const id = crypto.randomUUID()
         const now = new Date()
-        return new UserEntity(id, email, password, role, now, null)
+        const passwordHash = await Hasher.hash(args.password)
+
+        return new UserEntity({
+            ...args,
+            id,
+            password: passwordHash,
+            createdAt: now,
+            deletedAt: null,
+        })
     }
 }

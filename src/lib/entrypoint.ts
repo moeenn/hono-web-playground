@@ -2,7 +2,7 @@ type EntrypointFunc = (() => void) | (() => Promise<void>)
 
 function handleError(err: unknown) {
     if (err instanceof Error) {
-        console.error("error: " + err.message)
+        console.error(`error: ${err.message}`)
         return
     }
     console.error("error: ", err)

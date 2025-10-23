@@ -2,7 +2,7 @@ export type Option<T> = T | null
 type OkVariant<T> = { readonly isError: false; value: T }
 type ErrVariant = { readonly isError: true; error: Error }
 export type Result<T> = OkVariant<T> | ErrVariant
-export type NilResult = Result<null>
+export type NilResult = Result<null | undefined | void>
 
 const ok = <T>(value: T): Result<T> => ({
     isError: false,
