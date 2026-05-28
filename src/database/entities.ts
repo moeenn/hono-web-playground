@@ -1,7 +1,7 @@
 import { z } from "zod"
 import { EntityValidationError } from "#src/lib/database.js"
 import { Hasher } from "#src/lib/hash.js"
-import type { Option } from "#src/lib/monads.js"
+import type { option } from "#src/lib/monads.js"
 
 export type UserRole = "ADMIN" | "CUSTOMER"
 
@@ -11,7 +11,7 @@ export class UserEntity {
     public password: string
     public role: UserRole
     public createdAt: Date
-    public deletedAt: Option<Date>
+    public deletedAt: option<Date>
 
     static schema = z.object({
         id: z.uuid(),

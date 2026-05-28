@@ -1,15 +1,17 @@
-export type Option<T> = T | null
-type OkVariant<T> = { readonly isError: false; value: T }
-type ErrVariant = { readonly isError: true; error: Error }
-export type Result<T> = OkVariant<T> | ErrVariant
-export type NilResult = Result<null | undefined | void>
+export type option<T> = T | null
+export type poption<T> = Promise<option<T>>
+type okVariant<T> = { readonly isError: false; value: T }
+type errVariant = { readonly isError: true; error: Error }
+export type result<T> = okVariant<T> | errVariant
+export type nilResult = result<null | undefined | void>
+export type presult<T> = Promise<result<T>>
 
-const ok = <T>(value: T): Result<T> => ({
+const ok = <T>(value: T): result<T> => ({
     isError: false,
     value: value,
 })
 
-const err = <T>(error: string | Error): Result<T> => {
+const err = <T>(error: string | Error): result<T> => {
     if (error instanceof Error) {
         return {
             isError: true,
@@ -23,16 +25,16 @@ const err = <T>(error: string | Error): Result<T> => {
     }
 }
 
-const nil = (): NilResult => ok(null)
+const nil = (): nilResult => ok(null)
 
-function wrap(result: ErrVariant, prefix: string): ErrVariant {
+function wrap(result: errVariant, prefix: string): errVariant {
     result.error = new Error(`${prefix}: ${result.error.message}`)
     return result
 }
 
-const toOption = <T>(result: Result<T>): Option<T> => (result.isError ? null : result.value)
+const toOption = <T>(result: result<T>): option<T> => (result.isError ? null : result.value)
 
-function of<T>(fn: () => T): Result<T> {
+function of<T>(fn: () => T): result<T> {
     try {
         const result = fn()
         if (typeof result === "number" && Number.isNaN(result)) {
@@ -50,7 +52,7 @@ function of<T>(fn: () => T): Result<T> {
     }
 }
 
-async function ofPromise<T>(promise: Promise<T>): Promise<Result<T>> {
+async function ofPromise<T>(promise: Promise<T>): presult<T> {
     try {
         const result = await promise
         if (typeof result === "number" && Number.isNaN(result)) {

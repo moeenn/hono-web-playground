@@ -1,5 +1,5 @@
 export const content = {
-	website: {
-		title: "My Website",
-	}
+    website: {
+        title: "My Website",
+    },
 }

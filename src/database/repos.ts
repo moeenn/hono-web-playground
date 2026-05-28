@@ -1,9 +1,9 @@
 import { UserEntity } from "#src/database/entities.js"
 import { type Database, LimitOffset } from "#src/lib/database.js"
-import { type NilResult, type Option, Results } from "#src/lib/monads.js"
+import { type nilResult, type option, Results } from "#src/lib/monads.js"
 
 export class UserRepo {
-    constructor(private db: Database) { }
+    constructor(private db: Database) {}
 
     #listQuery = `
 		select * from users
@@ -24,7 +24,7 @@ export class UserRepo {
 		values (:id, :email, :password, :role, :createdAt)
 	`
 
-    insert(user: UserEntity): NilResult {
+    insert(user: UserEntity): nilResult {
         return Results.of(() => this.db.execNamed(this.#insertQuery, { ...user }))
     }
 
@@ -35,7 +35,7 @@ export class UserRepo {
 		limit 1;
 	`
 
-    findById(id: string): Option<UserEntity> {
+    findById(id: string): option<UserEntity> {
         const result = this.db.queryNamed(this.#findByIdQuery, { id })
         if (!result.length) {
             return null
@@ -51,12 +51,11 @@ export class UserRepo {
 		limit 1;
 	`
 
-    findByEmail(email: string): Option<UserEntity> {
+    findByEmail(email: string): option<UserEntity> {
         const result = this.db.queryNamed(this.#findByEmailQuery, { email })
         if (!result.length) {
             return null
         }
-
         return UserEntity.validated(result[0])
     }
 }

@@ -1,50 +1,49 @@
 {
-	"name": "sandbox",
-	"version": "0.0.1",
-	"type": "module",
-	"scripts": {
-		"server:dev": "tsx watch --env-file=.env src/cmd/main.ts",
-		"type-check": "npx tsc --noEmit",
-		"fmt": "npx prettier --write ./src/",
-		"lint": "npx eslint --fix ./src/ --ext .ts",
-		"check": "npm run type-check && npm run lint",
-		"test": "NODE_ENV=test node --import tsx --test",
-		"migrate:up": "tsx ./src/cmd/migrate.ts -cmd=up",
-		"migrate:down": "tsx ./src/cmd/migrate.ts -cmd=down",
-		"remove:dist": "rm -rvf ./dist",
-		"copy:public": "cp -r ./public ./dist/",
-		"compile": "npx esbuild src/cmd/main.ts --bundle --outfile=dist/index.js --platform=node --format=esm --packages=external --minify",
-		"pkg": "npm run remove:dist && npm run type-check && npm run css:build && npm run compile && npm run copy:public",
-		"start": "node dist/main.js",
-		"css:dev": "npx @tailwindcss/cli -i ./src/views/styles/global.css -o ./public/css/styles.css --watch",
-		"css:build": "npx @tailwindcss/cli -i ./src/views/styles/global.css -o ./public/css/styles.css --minify"
-	},
-	"prettier": {
-		"singleQuote": false,
-		"semi": false,
-		"tabWidth": 4,
-		"trailingComma": "all",
-		"printWidth": 100
-	},
-	"imports": {
-		"#src/*": "./dist/*"
-	},
-	"devDependencies": {
-		"@tailwindcss/cli": "^4.1.11",
-		"@types/node": "^24.2.0",
-		"esbuild": "^0.25.11",
-		"eslint": "^9.32.0",
-		"prettier": "^3.6.2",
-		"tsx": "^4.20.3",
-		"typescript": "^5.9.2",
-		"typescript-eslint": "^8.46.2"
-	},
-	"dependencies": {
-		"@hono/node-server": "^1.19.5",
-		"argon2": "^0.44.0",
-		"classnames": "^2.5.1",
-		"hono": "^4.10.2",
-		"pino": "^10.1.0",
-		"zod": "^4.1.12"
-	}
+    "name": "sandbox",
+    "version": "0.0.1",
+    "type": "module",
+    "scripts": {
+        "server:dev": "tsx watch --env-file=.env src/cmd/main.ts",
+        "type-check": "npx tsc --noEmit",
+        "fmt": "npx prettier --write ./src/",
+        "lint": "npx eslint --fix ./src/ --ext .ts",
+        "check": "npm run type-check && npm run lint",
+        "test": "NODE_ENV=test node --import tsx --test",
+        "migrate": "tsx ./src/cmd/migrate.ts",
+        "remove:dist": "rm -rvf ./dist",
+        "copy:public": "cp -r ./public ./dist/",
+        "compile": "npx esbuild src/cmd/main.ts --bundle --outfile=dist/index.js --platform=node --format=esm --packages=external --minify",
+        "pkg": "npm run remove:dist && npm run type-check && npm run css:build && npm run compile && npm run copy:public",
+        "start": "node dist/main.js",
+        "css:dev": "npx @tailwindcss/cli -i ./src/views/styles/global.css -o ./public/css/styles.css --watch",
+        "css:build": "npx @tailwindcss/cli -i ./src/views/styles/global.css -o ./public/css/styles.css --minify"
+    },
+    "prettier": {
+        "singleQuote": false,
+        "semi": false,
+        "tabWidth": 4,
+        "trailingComma": "all",
+        "printWidth": 100
+    },
+    "imports": {
+        "#src/*": "./dist/*"
+    },
+    "devDependencies": {
+        "@tailwindcss/cli": "^4.3.0",
+        "@types/node": "^25.9.1",
+        "esbuild": "^0.28.0",
+        "eslint": "^10.4.0",
+        "prettier": "^3.8.3",
+        "tsx": "^4.22.3",
+        "typescript": "^6.0.3",
+        "typescript-eslint": "^8.59.4"
+    },
+    "dependencies": {
+        "@hono/node-server": "^2.0.3",
+        "argon2": "^0.44.0",
+        "classnames": "^2.5.1",
+        "hono": "^4.12.21",
+        "pino": "^10.3.1",
+        "zod": "^4.4.3"
+    }
 }

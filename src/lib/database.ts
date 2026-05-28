@@ -1,7 +1,7 @@
 import { DatabaseSync, type SQLOutputValue } from "node:sqlite"
 import type { ZodError } from "zod"
-import type { ILogger } from "./logger.js"
-import type { Option } from "./monads.js"
+import { logger } from "./logger.js"
+import type { option } from "./monads.js"
 
 export class DatabaseConfig {
     constructor(public readonly path: string = "site.db") {}
@@ -9,48 +9,28 @@ export class DatabaseConfig {
 
 export class Database {
     #conn: DatabaseSync
-    #logger: Option<ILogger> = null
 
-    constructor(config: DatabaseConfig, logger?: ILogger) {
+    constructor(config: DatabaseConfig) {
         this.#conn = new DatabaseSync(config.path)
-        if (logger) {
-            this.#logger = logger
-        }
     }
 
     exec(query: string) {
-        if (this.#logger) {
-            this.#logger.info("executing query", { query })
-        }
-
         const statement = this.#conn.prepare(query)
         statement.run()
     }
 
     execNamed(query: string, args: NamedArgs) {
-        if (this.#logger) {
-            this.#logger.info("executing named query", { query })
-        }
-
         const parsed = named(query, args)
         const statement = this.#conn.prepare(parsed.query)
         statement.run(...parsed.params)
     }
 
     query(query: string): QueryResult {
-        if (this.#logger) {
-            this.#logger.info("running query", { query })
-        }
-
         const statement = this.#conn.prepare(query)
         return statement.all()
     }
 
     queryNamed(query: string, args: NamedArgs): QueryResult {
-        if (this.#logger) {
-            this.#logger.info("running named query", { query })
-        }
-
         const parsed = named(query, args)
         const statement = this.#conn.prepare(parsed.query)
         return statement.all(...parsed.params)
@@ -69,12 +49,13 @@ export class EntityValidationError extends Error {
 type QueryResult = Record<string, SQLOutputValue>[]
 type NamedArgs = Record<string, Stringable | Date | null>
 type NamedResult = { query: string; params: ParamType[] }
-type ParamType = Option<string>
+type ParamType = option<string>
 
 interface Stringable {
     toString(): string
 }
 
+// TODO: replace with the newer version.
 function named(query: string, args: NamedArgs): NamedResult {
     const params = [...query.matchAll(/:([a-zA-Z_][a-zA-Z0-9_]*)/g)].map((match) =>
         match[0].slice(1),
@@ -136,35 +117,21 @@ export class LimitOffset {
 export type Migration = {
     readonly name: string
     readonly up: string
-    readonly down: string
 }
 
 export class MigrationManager {
     #db: Database
     #migrations: Migration[]
-    #logger: Option<ILogger> = null
 
-    constructor(db: Database, migrations: Migration[], logger?: ILogger) {
+    constructor(db: Database, migrations: Migration[]) {
         this.#db = db
         this.#migrations = migrations
-        if (logger) this.#logger = logger
     }
 
     migrateUp() {
         for (const migration of this.#migrations) {
-            this.#logger?.info("running migration", { name: migration.name })
+            logger.info({ name: migration.name }, "running migration")
             this.#db.exec(migration.up)
-        }
-    }
-
-    migrateDown() {
-        const numMigrations = this.#migrations.length
-        for (let i = numMigrations; i >= 0; i--) {
-            const migration = this.#migrations[i]
-            if (!migration) continue
-
-            this.#logger?.info("rolling-back migration", { name: migration.name })
-            this.#db.exec(migration.down)
         }
     }
 }

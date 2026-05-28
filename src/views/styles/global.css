@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
-button, a, input[type="submit"] {
-	@apply cursor-pointer;
+button,
+a,
+input[type="submit"] {
+    @apply cursor-pointer;
 }
