@@ -1,7 +1,7 @@
 import type { FlashPayload } from "#src/lib/flash.js"
-import type { option } from "#src/src/lib/monads.js"
+import type { option } from "#src/lib/monads.js"
 import { Flash } from "#src/views/components/Flash.js"
-import { UserForm } from "#src/views/components/UserForm.js"
+import { UserForm } from "./UserForm.js"
 import { BaseLayout } from "#src/views/layouts/BaseLayout.js"
 
 type Props = {

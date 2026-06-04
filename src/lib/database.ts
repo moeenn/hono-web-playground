@@ -4,7 +4,11 @@ import { logger } from "./logger.js"
 import type { option } from "./monads.js"
 
 export class DatabaseConfig {
-    constructor(public readonly path: string = "site.db") {}
+    readonly path: string
+
+    constructor(path = "site.db") {
+        this.path = path
+    }
 }
 
 export class Database {

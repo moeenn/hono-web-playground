@@ -1,4 +1,4 @@
-import type { UserEntity } from "#src/database/entities.js"
+import type { UserEntity } from "../user_entity.js"
 
 type Props = {
     users: UserEntity[]

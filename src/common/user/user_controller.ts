@@ -1,33 +1,18 @@
 import { Hono, type Context } from "hono"
-import type { UserRepo } from "./database/repos.js"
-import { UsersPage } from "./views/pages/UsersPage.js"
-import { AddUserPage } from "./views/pages/AddUserPage.js"
-import { UserEntity, type UserRole } from "./database/entities.js"
-import z from "zod"
-import { logger } from "./lib/logger.js"
-import { flash, getFlashed } from "./lib/flash.js"
-
-class CreateUserRequest {
-    email: string
-    password: string
-    role: UserRole
-
-    #schema = z.object({
-        email: z.email(),
-        password: z.string(),
-        role: z.enum(["ADMIN", "CUSTOMER"]),
-    })
-
-    constructor(args: unknown) {
-        const v = this.#schema.parse(args)
-        this.email = v.email
-        this.password = v.password
-        this.role = v.role
-    }
-}
+import type { UserRepo } from "./user_repo.js"
+import { UsersPage } from "./views/UsersPage.js"
+import { AddUserPage } from "./views/AddUserPage.js"
+import { UserEntity } from "#src/common/user/user_entity.js"
+import { flash, getFlashed } from "#src/lib/flash.js"
+import { CreateUserRequest } from "./user_dto.js"
+import { logger } from "#src/lib/logger.js"
 
 export class UsersController {
-    constructor(private userRepo: UserRepo) {}
+    #userRepo: UserRepo
+
+    constructor(userRepo: UserRepo) {
+        this.#userRepo = userRepo
+    }
 
     routes(): Hono {
         const router = new Hono()
@@ -40,7 +25,7 @@ export class UsersController {
     }
 
     async getUsersPage(c: Context) {
-        const users = this.userRepo.list()
+        const users = this.#userRepo.list()
         const flash = getFlashed(c)
         const html = UsersPage({ users, flash })
         return c.html(html)
@@ -56,7 +41,7 @@ export class UsersController {
         const body = await c.req.parseBody()
         const validatedBody = new CreateUserRequest(body)
         const newUser = await UserEntity.make(validatedBody)
-        const result = this.userRepo.insert(newUser)
+        const result = this.#userRepo.insert(newUser)
         if (result.isError) {
             logger.error({ error: result.error.message }, "failed to create user")
             flash(c, "error", "Failed to create user.")

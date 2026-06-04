@@ -1,13 +1,17 @@
 import { Hasher } from "#src/lib/hash.js"
 import type { poption } from "#src/lib/monads.js"
-import type { UserEntity } from "./entities.js"
-import type { UserRepo } from "./repos.js"
+import type { UserEntity } from "#src/common/user/user_entity.js"
+import type { UserRepo } from "../../common/user/user_repo.js"
 
 export class AuthService {
-    constructor(private userRepo: UserRepo) {}
+    #userRepo: UserRepo
+
+    constructor(userRepo: UserRepo) {
+        this.#userRepo = userRepo
+    }
 
     async authenticate(email: string, password: string): poption<UserEntity> {
-        const user = this.userRepo.findByEmail(email)
+        const user = this.#userRepo.findByEmail(email)
         if (!user) {
             return null
         }

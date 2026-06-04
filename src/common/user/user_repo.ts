@@ -1,9 +1,13 @@
-import { UserEntity } from "#src/database/entities.js"
+import { UserEntity } from "#src/common/user/user_entity.js"
 import { type Database, LimitOffset } from "#src/lib/database.js"
 import { type nilResult, type option, Results } from "#src/lib/monads.js"
 
 export class UserRepo {
-    constructor(private db: Database) {}
+    #db: Database
+
+    constructor(db: Database) {
+        this.#db = db
+    }
 
     #listQuery = `
 		select * from users
@@ -15,7 +19,7 @@ export class UserRepo {
 
     list(args?: LimitOffset): UserEntity[] {
         if (!args) args = new LimitOffset()
-        const result = this.db.queryNamed(this.#listQuery, { ...args })
+        const result = this.#db.queryNamed(this.#listQuery, { ...args })
         return result.map((u) => UserEntity.validated(u))
     }
 
@@ -25,7 +29,7 @@ export class UserRepo {
 	`
 
     insert(user: UserEntity): nilResult {
-        return Results.of(() => this.db.execNamed(this.#insertQuery, { ...user }))
+        return Results.of(() => this.#db.execNamed(this.#insertQuery, { ...user }))
     }
 
     #findByIdQuery = `
@@ -36,7 +40,7 @@ export class UserRepo {
 	`
 
     findById(id: string): option<UserEntity> {
-        const result = this.db.queryNamed(this.#findByIdQuery, { id })
+        const result = this.#db.queryNamed(this.#findByIdQuery, { id })
         if (!result.length) {
             return null
         }
@@ -52,7 +56,7 @@ export class UserRepo {
 	`
 
     findByEmail(email: string): option<UserEntity> {
-        const result = this.db.queryNamed(this.#findByEmailQuery, { email })
+        const result = this.#db.queryNamed(this.#findByEmailQuery, { email })
         if (!result.length) {
             return null
         }

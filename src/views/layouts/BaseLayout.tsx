@@ -1,11 +1,10 @@
 import { type JSX } from "hono/jsx/jsx-runtime"
-import { content } from "#src/content.js"
 import { getVersionedPath } from "#src/lib/cache.js"
 
 type Props = {
     title: string
     meta?: JSX.Element
-    children: JSX.Element
+    children: JSX.Element | JSX.Element[]
 }
 
 export function BaseLayout(props: Props) {
@@ -17,9 +16,9 @@ export function BaseLayout(props: Props) {
                 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
                 {props.meta}
                 <link rel="stylesheet" href={getVersionedPath("/public/css/styles.css")} />
-                <title>
-                    {content.website.title} - {props.title}
-                </title>
+                <script src="/public/js/alpine.js" defer></script>
+                <script src="/public/js/htmx.js" defer></script>
+                <title>MyWebsite - {props.title}</title>
             </head>
             <body class="bg-zinc-50">
                 <main>{props.children}</main>
