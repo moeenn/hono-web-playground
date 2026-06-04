@@ -8,12 +8,14 @@ type Props = {
 export function Flash(props: Props) {
     return (
         <div
-            class={classNames("p-4 rounded border", {
-                "bg-green-100 text-green-800 border-green-200": props.payload.kind === "success",
-                "bg-red-100 text-red-800 border-red-200": props.payload.kind === "error",
+            class={classNames("p-4 border border-b", {
+                "bg-green-200 text-green-800 border-green-300": props.payload.kind === "success",
+                "bg-red-200 text-red-800 border-red-300": props.payload.kind === "error",
             })}
         >
-            <p class="text-sm">{props.payload.message}</p>
+            <div className="container px-4 mx-auto">
+                <p class="text-sm">{props.payload.message}</p>
+            </div>
         </div>
     )
 }

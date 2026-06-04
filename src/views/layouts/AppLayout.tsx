@@ -15,12 +15,11 @@ export function AppLayout(props: Props) {
         <BaseLayout title={props.title}>
             <>
                 {props.flash && (
-                    <div class="mt-2">
+                    <div class="mb-2">
                         <Flash payload={props.flash} />
                     </div>
                 )}
             </>
-
             <div>{props.children}</div>
         </BaseLayout>
     )
