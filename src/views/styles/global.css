@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+@theme {
+    --spacing-container: 70rem;
+}
+
 button,
 a,
 input[type="submit"] {
