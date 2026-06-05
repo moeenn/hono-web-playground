@@ -2,6 +2,7 @@ import { z } from "zod"
 import { EntityValidationError } from "#src/lib/database.js"
 import { Hasher } from "#src/lib/hash.js"
 import type { option } from "#src/lib/monads.js"
+import { uuid } from "#src/lib/id.js"
 
 export type UserRole = "ADMIN" | "CUSTOMER"
 
@@ -45,7 +46,7 @@ export class UserEntity {
         password: string
         role: UserRole
     }): Promise<UserEntity> {
-        const id = crypto.randomUUID()
+        const id = uuid()
         const now = new Date()
         const passwordHash = await Hasher.hash(args.password)
 

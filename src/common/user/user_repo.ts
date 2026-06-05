@@ -1,5 +1,5 @@
 import { UserEntity } from "#src/common/user/user_entity.js"
-import { type Database, LimitOffset } from "#src/lib/database.js"
+import { type Database, sql, LimitOffset } from "#src/lib/database.js"
 import { type nilResult, type option, Results } from "#src/lib/monads.js"
 
 export class UserRepo {
@@ -9,7 +9,7 @@ export class UserRepo {
         this.#db = db
     }
 
-    #listQuery = `
+    #listQuery = sql`
 		select * from users
 		where deletedAt is null
 		order by createdAt desc
@@ -23,7 +23,7 @@ export class UserRepo {
         return result.map((u) => UserEntity.validated(u))
     }
 
-    #insertQuery = `
+    #insertQuery = sql`
 		insert into users (id, email, password, role, createdAt)
 		values (:id, :email, :password, :role, :createdAt)
 	`
@@ -32,7 +32,7 @@ export class UserRepo {
         return Results.of(() => this.#db.execNamed(this.#insertQuery, { ...user }))
     }
 
-    #findByIdQuery = `
+    #findByIdQuery = sql`
 		select * from users
 		where id = :id
 		and deletedAt is null
@@ -48,7 +48,7 @@ export class UserRepo {
         return UserEntity.validated(result[0])
     }
 
-    #findByEmailQuery = `
+    #findByEmailQuery = sql`
 		select * from users
 		where email = :email
 		and deletedAt is null
