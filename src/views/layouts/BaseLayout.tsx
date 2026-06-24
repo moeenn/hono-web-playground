@@ -20,7 +20,7 @@ export function BaseLayout(props: Props) {
                 <script src="/public/js/htmx.js" defer></script>
                 <title>MyWebsite - {props.title}</title>
             </head>
-            <body class="bg-zinc-50">
+            <body class="bg-zinc-100">
                 <main>{props.children}</main>
             </body>
         </html>
